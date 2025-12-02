@@ -1,0 +1,122 @@
+<div class="comments-container">
+  <!-- 虎扑评分 Rating Summary Section - Always visible -->
+  <ng-container *ngIf="ratingStats$ | async as stats">
+    <div class="rating-summary">
+      <div class="rating-left">
+        <div class="average-score">{{ stats.total > 0 ? stats.average : '-' }}</div>
+        <div class="average-stars">
+          <mat-icon *ngFor="let i of [1,2,3,4,5]" [class.filled]="i <= stats.average">
+            {{ i <= stats.average ? 'star' : 'star_border' }}
+          </mat-icon>
+        </div>
+        <div class="total-reviews">{{ stats.total }} JRs评分</div>
+      </div>
+      <div class="rating-right">
+        <div class="rating-bar" *ngFor="let percent of stats.distribution; let i = index">
+          <span class="star-label">{{ 5 - i }}★</span>
+          <div class="bar-container">
+            <div class="bar-fill" [style.width.%]="percent"></div>
+          </div>
+          <span class="percent-label">{{ stats.total > 0 ? (percent | number:'1.1-1') : '0' }}%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 立即评分 Rate Now Section -->
+    <div class="rate-now-section">
+      <span class="rate-label">立即评分</span>
+      <div class="star-picker-inline">
+        <mat-icon *ngFor="let i of [1,2,3,4,5]"
+                  (click)="setRating(i)"
+                  (mouseenter)="setHover(i)"
+                  (mouseleave)="setHover(0)"
+                  [class.filled]="i <= (hoverRating || selectedRating)">
+          {{ getStarIcon(i) }}
+        </mat-icon>
+      </div>
+    </div>
+  </ng-container>
+
+  <mat-divider></mat-divider>
+
+  <!-- 全部回复 All Comments Header -->
+  <div class="comments-header">
+    <h3>全部回复 <span class="comment-count">/{{ (comments$ | async)?.length || 0 }}</span></h3>
+    <div class="sort-buttons">
+      <button mat-button class="active">最早</button>
+      <button mat-button>最晚</button>
+    </div>
+  </div>
+
+  <!-- Comments List -->
+  <div class="comments-list">
+    <div class="comment-item" *ngFor="let comment of comments$ | async">
+      <div class="comment-avatar">
+        <mat-icon>account_circle</mat-icon>
+      </div>
+      <div class="comment-content">
+        <div class="comment-header-row">
+          <span class="author-name">{{ comment.authorName || 'JR' }}</span>
+          <span class="comment-stars">
+            <mat-icon *ngFor="let star of getDisplayStars(comment.rating)"
+                      [class.filled]="star === 1" class="mini-star">
+              {{ star === 1 ? 'star' : 'star_border' }}
+            </mat-icon>
+          </span>
+          <span class="comment-date">{{ comment.createdAt.toDate() | date:'yyyy-MM-dd' }}</span>
+        </div>
+        <p class="comment-text">{{ comment.text }}</p>
+        <div class="comment-actions">
+          <button mat-button class="action-btn">
+            <mat-icon>thumb_up</mat-icon> 点亮
+          </button>
+          <button mat-button class="action-btn">
+            <mat-icon>reply</mat-icon> 回复
+          </button>
+          <button mat-button class="action-btn delete-btn" *ngIf="canDeleteComment(comment)" (click)="deleteComment(comment)">
+            <mat-icon>delete</mat-icon> 删除
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="no-comments" *ngIf="(comments$ | async)?.length === 0">
+      <mat-icon>forum</mat-icon>
+      <p>暂无评论，快来抢沙发！</p>
+    </div>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <!-- Add Comment Form - Always visible -->
+  <div class="add-comment-form">
+    <div class="form-rating" *ngIf="selectedRating === 0">
+      <span>请先评分：</span>
+      <div class="star-picker-small">
+        <mat-icon *ngFor="let i of [1,2,3,4,5]"
+                  (click)="setRating(i)"
+                  (mouseenter)="setHover(i)"
+                  (mouseleave)="setHover(0)"
+                  [class.filled]="i <= (hoverRating || selectedRating)">
+          {{ getStarIcon(i) }}
+        </mat-icon>
+      </div>
+    </div>
+    <div class="form-rating selected" *ngIf="selectedRating > 0">
+      <span>你的评分：{{ selectedRating }}星</span>
+      <mat-icon *ngFor="let i of [1,2,3,4,5]" [class.filled]="i <= selectedRating" class="small-star">
+        {{ i <= selectedRating ? 'star' : 'star_border' }}
+      </mat-icon>
+    </div>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>发表你的看法...</mat-label>
+      <textarea matInput [(ngModel)]="newCommentText" rows="3" placeholder="说点什么吧..."></textarea>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" (click)="addComment()"
+            [disabled]="!newCommentText.trim() || selectedRating === 0">
+      发布评论
+    </button>
+  </div>
+</div>

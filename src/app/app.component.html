@@ -1,0 +1,22 @@
+<h1>App is running!</h1>
+<mat-toolbar color="primary">
+  <button mat-icon-button routerLink="/">
+    <mat-icon>stars</mat-icon>
+  </button>
+  <span>StarTalk</span>
+  <span class="spacer"></span>
+  <button mat-button routerLink="/">Home</button>
+
+  <ng-container *ngIf="authService.user$ | async as user; else loginBtn">
+    <button mat-button routerLink="/add-post">Add Post</button>
+    <button mat-button (click)="logout()">Logout ({{ user.displayName || user.email }})</button>
+  </ng-container>
+
+  <ng-template #loginBtn>
+    <button mat-button (click)="login()">Login with Google</button>
+  </ng-template>
+</mat-toolbar>
+
+<div class="container">
+  <router-outlet></router-outlet>
+</div>

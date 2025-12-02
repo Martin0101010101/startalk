@@ -1,0 +1,20 @@
+<div class="add-post-container">
+  <h2>Create New Post</h2>
+  <form (ngSubmit)="onSubmit()">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Title</mat-label>
+      <input matInput [(ngModel)]="title" name="title" required>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Content</mat-label>
+      <textarea matInput [(ngModel)]="content" name="content" rows="10" required></textarea>
+    </mat-form-field>
+
+    <div class="actions">
+      <button mat-raised-button color="primary" type="submit" [disabled]="!title || !content">
+        Publish Post
+      </button>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,45 @@
+.post-detail-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 24px 0;
+}
+
+.avatar-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #888;
+}
+
+.post-content {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin: 24px 0;
+  white-space: pre-wrap;
+}
+
+.post-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 8px 16px;
+
+  button {
+    mat-icon {
+      margin-right: 4px;
+    }
+  }
+}
+
+.actions-section {
+  padding: 16px;
+}
+
+.comments-section-wrapper {
+  margin-top: 32px;
+}
+
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  padding: 48px;
+}

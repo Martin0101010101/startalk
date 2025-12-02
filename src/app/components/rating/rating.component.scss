@@ -1,0 +1,15 @@
+.rating-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.stars {
+  display: flex;
+}
+
+.average {
+  margin-left: 12px;
+  font-size: 0.9rem;
+  color: #666;
+}

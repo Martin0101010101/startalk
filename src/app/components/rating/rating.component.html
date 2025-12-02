@@ -1,0 +1,14 @@
+<div class="rating-container">
+  <div class="stars">
+    <button mat-icon-button *ngFor="let star of stars"
+            (mouseenter)="hoveredStar = star"
+            (mouseleave)="hoveredStar = null"
+            (click)="onRate(star)"
+            [color]="(hoveredStar !== null ? star <= hoveredStar : star <= (userRating$ | async)!) ? 'accent' : ''">
+      <mat-icon>{{ (hoveredStar !== null ? star <= hoveredStar : star <= (userRating$ | async)!) ? 'star' : 'star_border' }}</mat-icon>
+    </button>
+  </div>
+  <div class="average">
+    Average: {{ (averageRating$ | async) | number:'1.1-1' }} / 5
+  </div>
+</div>

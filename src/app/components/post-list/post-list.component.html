@@ -1,0 +1,7 @@
+<div class="post-grid">
+  <app-post-card *ngFor="let post of posts$ | async" [post]="post"></app-post-card>
+</div>
+
+<div *ngIf="(posts$ | async)?.length === 0" class="no-posts">
+  <p>No posts yet. Be the first to share!</p>
+</div>
