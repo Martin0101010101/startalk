@@ -77,12 +77,18 @@
             <div class="reply-content-wrapper">
               <div class="reply-header">
                 <span class="reply-author">{{ reply.authorName }}</span>
+                <span class="reply-target" *ngIf="reply.replyToName">
+                  <span class="reply-arrow">回复</span> {{ reply.replyToName }}
+                </span>
                 <span class="reply-date">{{ reply.createdAt.toDate() | date:'MM-dd' }}</span>
               </div>
               <div class="reply-text">{{ reply.text }}</div>
               <div class="reply-actions">
-                <button class="reply-like-btn" (click)="likeReply(comment.id!, reply)">
+                <button class="reply-action-btn" (click)="likeReply(comment.id!, reply)">
                   <mat-icon>thumb_up_off_alt</mat-icon> {{ reply.likes || 0 }}
+                </button>
+                <button class="reply-action-btn" (click)="initiateReplyToUser(comment.id!, reply.authorName)">
+                  <mat-icon>chat_bubble_outline</mat-icon> 回复
                 </button>
               </div>
             </div>
@@ -110,7 +116,13 @@
         <!-- Reply Input -->
         <div class="reply-input-area" *ngIf="replyingToCommentId === comment.id">
           <div class="reply-box">
-            <textarea matInput placeholder="回复 @{{comment.authorName}}..." [(ngModel)]="replyText" rows="3"></textarea>
+            <div class="reply-context" *ngIf="replyingToUserName">
+              <span>回复 {{ replyingToUserName }}</span>
+              <button mat-icon-button class="close-context" (click)="replyingToUserName = null">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+            <textarea matInput [placeholder]="replyingToUserName ? '回复 ' + replyingToUserName + '...' : '回复 ' + (comment.authorName || 'JR') + '...'" [(ngModel)]="replyText" rows="3"></textarea>
             <div class="reply-box-actions">
               <button mat-raised-button color="primary" (click)="submitReply(comment.id!)" [disabled]="!replyText.trim()">
                 发布回复

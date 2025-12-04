@@ -39,6 +39,7 @@ export class CommentSectionComponent implements OnInit {
 
   // Reply state
   replyingToCommentId: string | null = null;
+  replyingToUserName: string | null = null;
   replyText = '';
   expandedComments = new Set<string>(); // Set of comment IDs where replies are expanded
 
@@ -135,12 +136,19 @@ export class CommentSectionComponent implements OnInit {
   }
 
   toggleReply(commentId: string) {
-    if (this.replyingToCommentId === commentId) {
+    if (this.replyingToCommentId === commentId && !this.replyingToUserName) {
       this.replyingToCommentId = null;
     } else {
       this.replyingToCommentId = commentId;
+      this.replyingToUserName = null; // Reset specific user reply
       this.replyText = '';
     }
+  }
+
+  initiateReplyToUser(commentId: string, userName: string) {
+    this.replyingToCommentId = commentId;
+    this.replyingToUserName = userName;
+    this.replyText = '';
   }
 
   async submitReply(commentId: string) {
@@ -157,11 +165,13 @@ export class CommentSectionComponent implements OnInit {
       authorAvatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.displayName || 'User'}`,
       text: this.replyText,
       createdAt: Timestamp.now(),
-      likes: 0
+      likes: 0,
+      replyToName: this.replyingToUserName || undefined
     };
 
     await this.commentService.addReply(commentId, reply, this.postId);
     this.replyingToCommentId = null;
+    this.replyingToUserName = null;
     this.replyText = '';
     // Auto expand to show the new reply
     this.expandedComments.add(commentId);

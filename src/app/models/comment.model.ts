@@ -8,6 +8,7 @@ export interface Reply {
   text: string;
   createdAt: Timestamp;
   likes: number;
+  replyToName?: string;
 }
 
 export interface Comment {
