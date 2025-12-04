@@ -1,8 +1,10 @@
 .comments-container {
-  background: #1a1a2e;
+  background: rgba(30, 41, 59, 0.95); /* Slate 800 with transparency */
   border-radius: 12px;
   padding: 24px;
-  color: #fff;
+  color: #e2e8f0; /* Slate 200 */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Frosty border */
+  backdrop-filter: blur(5px); /* Frosted glass effect */
 }
 
 // 虎扑评分 Rating Summary Section
@@ -10,9 +12,10 @@
   display: flex;
   gap: 32px;
   padding: 20px;
-  background: #252542;
+  background: rgba(15, 23, 42, 0.6); /* Darker slate */
   border-radius: 8px;
   margin-bottom: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .rating-left {
@@ -22,7 +25,7 @@
   .average-score {
     font-size: 48px;
     font-weight: bold;
-    color: #00bcd4;
+    color: #F3CD00; /* Calvin Gold */
   }
 
   .average-stars {
@@ -35,17 +38,17 @@
       font-size: 16px;
       width: 16px;
       height: 16px;
-      color: #555;
+      color: #64748b; /* Slate 500 */
 
       &.filled {
-        color: #00bcd4;
+        color: #F3CD00; /* Calvin Gold */
       }
     }
   }
 
   .total-reviews {
     font-size: 12px;
-    color: #888;
+    color: #94a3b8; /* Slate 400 */
   }
 }
 
@@ -63,28 +66,28 @@
 
   .star-label {
     font-size: 12px;
-    color: #888;
+    color: #94a3b8;
     min-width: 30px;
   }
 
   .bar-container {
     flex: 1;
     height: 8px;
-    background: #333;
+    background: #334155; /* Slate 700 */
     border-radius: 4px;
     overflow: hidden;
   }
 
   .bar-fill {
     height: 100%;
-    background: #00bcd4;
+    background: #F3CD00; /* Calvin Gold */
     border-radius: 4px;
     transition: width 0.3s ease;
   }
 
   .percent-label {
     font-size: 12px;
-    color: #888;
+    color: #94a3b8;
     min-width: 45px;
     text-align: right;
   }
@@ -437,7 +440,7 @@
         .reply-target {
           font-size: 0.9rem;
           color: #666;
-          
+
           .reply-arrow {
             color: #999;
             margin-right: 4px;
@@ -529,7 +532,7 @@
         height: 24px;
         line-height: 24px;
         margin-left: 8px;
-        
+
         mat-icon {
           font-size: 16px;
           width: 16px;
@@ -547,6 +550,7 @@
       font-family: inherit;
       background: white;
       transition: border-color 0.2s, box-shadow 0.2s;
+      box-sizing: border-box;
 
       &:focus {
         outline: none;

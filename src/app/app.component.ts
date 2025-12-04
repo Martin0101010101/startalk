@@ -5,6 +5,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from './services/auth.service';
+import { WeatherWidgetComponent } from './components/weather-widget/weather-widget.component';
 
 @Component({
   selector: 'app-root',
@@ -15,7 +16,8 @@ import { AuthService } from './services/auth.service';
     RouterLink,
     MatToolbarModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    WeatherWidgetComponent
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'

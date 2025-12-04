@@ -1,10 +1,24 @@
-<h1>App is running!</h1>
-<mat-toolbar color="primary">
+<div class="snow-container">
+  <div class="snowflake" style="left: 10%; animation-duration: 10s; animation-delay: 0s;">❄</div>
+  <div class="snowflake" style="left: 20%; animation-duration: 12s; animation-delay: 2s;">❅</div>
+  <div class="snowflake" style="left: 30%; animation-duration: 8s; animation-delay: 4s;">❆</div>
+  <div class="snowflake" style="left: 40%; animation-duration: 15s; animation-delay: 1s;">❄</div>
+  <div class="snowflake" style="left: 50%; animation-duration: 11s; animation-delay: 3s;">❅</div>
+  <div class="snowflake" style="left: 60%; animation-duration: 9s; animation-delay: 5s;">❆</div>
+  <div class="snowflake" style="left: 70%; animation-duration: 13s; animation-delay: 2s;">❄</div>
+  <div class="snowflake" style="left: 80%; animation-duration: 10s; animation-delay: 4s;">❅</div>
+  <div class="snowflake" style="left: 90%; animation-duration: 14s; animation-delay: 1s;">❆</div>
+</div>
+
+<mat-toolbar color="primary" style="background-color: var(--primary-color); position: relative; z-index: 10;">
   <button mat-icon-button routerLink="/">
     <mat-icon>stars</mat-icon>
   </button>
   <span>StarTalk</span>
   <span class="spacer"></span>
+
+  <app-weather-widget></app-weather-widget>
+
   <button mat-button routerLink="/">Home</button>
 
   <ng-container *ngIf="authService.user$ | async as user; else loginBtn">

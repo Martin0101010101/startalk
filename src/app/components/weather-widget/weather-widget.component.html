@@ -1,0 +1,6 @@
+<div class="weather-container" *ngIf="!loading() && weather() as w">
+  <mat-icon>{{ getWeatherIcon(w.code) }}</mat-icon>
+  <span class="temp">{{ w.temp }}°F</span>
+  <span class="desc">{{ getWeatherDesc(w.code) }}</span>
+  <span class="location">Grand Rapids</span>
+</div>
