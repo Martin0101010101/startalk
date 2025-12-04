@@ -143,23 +143,20 @@
 
   <!-- Add Comment Form - Always visible -->
   <div class="add-comment-form">
-    <div class="form-rating" *ngIf="selectedRating === 0">
-      <span>请先评分：</span>
+    <div class="form-rating" [class.selected]="selectedRating > 0">
+      <span *ngIf="selectedRating === 0">请先评分：</span>
+      <span *ngIf="selectedRating > 0">你的评分：{{ selectedRating }}星</span>
+      
       <div class="star-picker-small">
         <mat-icon *ngFor="let i of [1,2,3,4,5]"
                   (click)="setRating(i)"
                   (mouseenter)="setHover(i)"
                   (mouseleave)="setHover(0)"
-                  [class.filled]="i <= (hoverRating || selectedRating)">
-          {{ getStarIcon(i) }}
+                  [class.filled]="i <= (hoverRating || selectedRating)"
+                  class="small-star">
+          {{ (i <= (hoverRating || selectedRating)) ? 'star' : 'star_border' }}
         </mat-icon>
       </div>
-    </div>
-    <div class="form-rating selected" *ngIf="selectedRating > 0">
-      <span>你的评分：{{ selectedRating }}星</span>
-      <mat-icon *ngFor="let i of [1,2,3,4,5]" [class.filled]="i <= selectedRating" class="small-star">
-        {{ i <= selectedRating ? 'star' : 'star_border' }}
-      </mat-icon>
     </div>
 
     <mat-form-field appearance="outline" class="full-width">

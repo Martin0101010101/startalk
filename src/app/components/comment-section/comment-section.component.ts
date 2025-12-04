@@ -1,4 +1,4 @@
-import { Component, Input, inject, OnInit } from '@angular/core';
+import { Component, Input, inject, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -12,6 +12,7 @@ import { CommentService } from '../../services/comment.service';
 import { AuthService } from '../../services/auth.service';
 import { Observable, map, BehaviorSubject, combineLatest } from 'rxjs';
 import { Comment, Reply } from '../../models/comment.model';
+import { Post } from '../../models/post.model';
 import { Timestamp } from '@angular/fire/firestore';
 
 @Component({
@@ -21,8 +22,9 @@ import { Timestamp } from '@angular/fire/firestore';
   templateUrl: './comment-section.component.html',
   styleUrl: './comment-section.component.scss'
 })
-export class CommentSectionComponent implements OnInit {
+export class CommentSectionComponent implements OnInit, OnChanges {
   @Input() postId!: string;
+  @Input() post?: Post;
 
   private commentService = inject(CommentService);
   private authService = inject(AuthService);
@@ -32,6 +34,7 @@ export class CommentSectionComponent implements OnInit {
   
   // Sorting
   sortBy$ = new BehaviorSubject<'newest' | 'hottest'>('newest');
+  post$ = new BehaviorSubject<Post | undefined>(undefined);
 
   newCommentText = '';
   selectedRating = 0;
@@ -42,6 +45,12 @@ export class CommentSectionComponent implements OnInit {
   replyingToUserName: string | null = null;
   replyText = '';
   expandedComments = new Set<string>(); // Set of comment IDs where replies are expanded
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['post']) {
+      this.post$.next(changes['post'].currentValue);
+    }
+  }
 
   ngOnInit() {
     const rawComments$ = this.commentService.getComments(this.postId);
@@ -66,8 +75,8 @@ export class CommentSectionComponent implements OnInit {
       })
     );
 
-    this.ratingStats$ = rawComments$.pipe(
-      map(comments => this.calculateRatingStats(comments))
+    this.ratingStats$ = combineLatest([rawComments$, this.post$]).pipe(
+      map(([comments, post]) => this.calculateRatingStats(comments, post))
     );
   }
 
@@ -75,29 +84,68 @@ export class CommentSectionComponent implements OnInit {
     this.sortBy$.next(sort);
   }
 
-  calculateRatingStats(comments: Comment[]): RatingStats {
-    const total = comments.length;
-    if (total === 0) {
-      return { average: 0, total: 0, distribution: [0, 0, 0, 0, 0] };
-    }
-
+  calculateRatingStats(comments: Comment[], post?: Post): RatingStats {
+    let total = comments.length;
     const distribution = [0, 0, 0, 0, 0]; // 5, 4, 3, 2, 1 stars
     let sum = 0;
 
     comments.forEach(c => {
       sum += c.rating;
-      distribution[5 - c.rating]++;
+      if (c.rating >= 1 && c.rating <= 5) {
+        distribution[5 - c.rating]++;
+      }
     });
 
-    // Calculate average on 10-point scale (1 star = 2 points)
-    // Original average (1-5) * 2
-    const average5 = sum / total;
-    const average10 = Math.round(average5 * 2 * 10) / 10;
+    // Reconcile with Post data if available (to include author's rating)
+    if (post) {
+      const postTotal = post.ratingCount || 0;
+      const postRating = post.rating || 0;
 
+      // If post has more ratings than comments, assume the difference is the author's rating(s)
+      if (postTotal > total) {
+        const missingCount = postTotal - total;
+        const currentSum = sum;
+        const targetSum = postRating * postTotal;
+        const missingSum = targetSum - currentSum;
+
+        // If we're missing exactly 1 rating (likely the author's), we can infer it
+        if (missingCount === 1) {
+          const inferredRating = Math.round(missingSum);
+          if (inferredRating >= 1 && inferredRating <= 5) {
+            distribution[5 - inferredRating]++;
+            sum += inferredRating;
+            total++;
+          }
+        } else if (missingCount > 0) {
+          // If multiple missing, we can't infer distribution perfectly.
+          // We'll just use the post's total and average for the summary numbers,
+          // but the distribution bars might be slightly off (normalized to what we have).
+          // Or we could distribute the missing count proportionally? 
+          // Let's just trust the post's total count for the "Total Reviews" display.
+          total = postTotal;
+        }
+      }
+    }
+
+    // Calculate average on 10-point scale
+    let average10 = 0;
+    if (post && post.ratingCount > 0) {
+      // Trust the post's stored average as the source of truth
+      average10 = Math.round(post.rating * 2 * 10) / 10;
+    } else if (total > 0) {
+      const average5 = sum / total;
+      average10 = Math.round(average5 * 2 * 10) / 10;
+    }
+
+    // Normalize distribution percentages
+    // If we used postTotal but didn't add to distribution array, the sum of distribution won't match total.
+    // We should calculate percentages based on the sum of distribution counts to be visually correct for the bars we show.
+    const distributionTotal = distribution.reduce((a, b) => a + b, 0);
+    
     return {
       average: average10,
-      total,
-      distribution: distribution.map(count => (count / total) * 100)
+      total: post ? (post.ratingCount || 0) : total,
+      distribution: distribution.map(count => distributionTotal > 0 ? (count / distributionTotal) * 100 : 0)
     };
   }
 
@@ -165,16 +213,24 @@ export class CommentSectionComponent implements OnInit {
       authorAvatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.displayName || 'User'}`,
       text: this.replyText,
       createdAt: Timestamp.now(),
-      likes: 0,
-      replyToName: this.replyingToUserName || undefined
+      likes: 0
     };
 
-    await this.commentService.addReply(commentId, reply, this.postId);
-    this.replyingToCommentId = null;
-    this.replyingToUserName = null;
-    this.replyText = '';
-    // Auto expand to show the new reply
-    this.expandedComments.add(commentId);
+    if (this.replyingToUserName) {
+      reply.replyToName = this.replyingToUserName;
+    }
+
+    try {
+      await this.commentService.addReply(commentId, reply, this.postId);
+      this.replyingToCommentId = null;
+      this.replyingToUserName = null;
+      this.replyText = '';
+      // Auto expand to show the new reply
+      this.expandedComments.add(commentId);
+    } catch (error) {
+      console.error('Error adding reply:', error);
+      alert('回复发布失败，请重试');
+    }
   }
 
   async likeReply(commentId: string, reply: Reply) {

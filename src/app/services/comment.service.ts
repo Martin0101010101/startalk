@@ -133,6 +133,18 @@ export class CommentService {
     const postRef = doc(this.firestore, 'posts', postId);
 
     return runTransaction(this.firestore, async (transaction) => {
+      // 1. Read comment and post to ensure they exist and to follow Read-Write pattern
+      const commentDoc = await transaction.get(commentRef);
+      if (!commentDoc.exists()) {
+        throw new Error("Comment does not exist!");
+      }
+
+      const postDoc = await transaction.get(postRef);
+      if (!postDoc.exists()) {
+        throw new Error("Post does not exist!");
+      }
+
+      // 2. Writes
       // Update comment with new reply
       transaction.update(commentRef, {
         replies: arrayUnion(reply)
