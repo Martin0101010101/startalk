@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { PostService } from '../../services/post.service';
 import { AuthService } from '../../services/auth.service';
-import { Observable, switchMap } from 'rxjs';
+import { Observable, switchMap, tap } from 'rxjs';
 import { Post } from '../../models/post.model';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -29,6 +29,12 @@ export class PostDetailComponent implements OnInit {
 
   ngOnInit() {
     this.post$ = this.route.paramMap.pipe(
+      tap(params => {
+        const id = params.get('id');
+        if (id) {
+          this.postService.incrementViews(id);
+        }
+      }),
       switchMap(params => {
         const id = params.get('id');
         return this.postService.getPost(id!);

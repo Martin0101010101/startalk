@@ -12,6 +12,7 @@ export interface Post {
   likes: number;
   rating: number; // 0-5 stars
   ratingCount: number; // Number of people who rated
+  views?: number; // Number of times the post has been viewed
   tags?: string[];
   topComment?: {
     id: string;

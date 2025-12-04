@@ -43,7 +43,7 @@ export class PostListComponent implements OnInit {
   // Controls
   searchControl = new FormControl('');
   sortControl = new FormControl<'createdAt' | 'likes'>('createdAt');
-  
+
   // Data Streams
   posts$ = combineLatest([
     this.postService.getPosts(), // In a real app, we'd pass sort params here, but for now we filter client-side for smoother demo
@@ -54,11 +54,11 @@ export class PostListComponent implements OnInit {
       // Client-side filtering and sorting for demo purposes
       // In production, this should be done via Firestore queries
       let filtered = posts;
-      
+
       if (searchTerm) {
         const term = searchTerm.toLowerCase();
-        filtered = posts.filter(p => 
-          p.title.toLowerCase().includes(term) || 
+        filtered = posts.filter(p =>
+          p.title.toLowerCase().includes(term) ||
           p.content.toLowerCase().includes(term)
         );
       }
@@ -70,6 +70,8 @@ export class PostListComponent implements OnInit {
       });
     })
   );
+
+  trendingPosts$ = this.postService.getTrendingPosts(5);
 
   ngOnInit(): void {}
 

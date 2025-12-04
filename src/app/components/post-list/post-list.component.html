@@ -5,45 +5,86 @@
       <h1>Community Forum</h1>
       <p>Join the conversation, share your thoughts.</p>
     </div>
-    <button mat-raised-button color="primary" class="add-post-btn" (click)="openAddPostDialog()">
+    <button mat-raised-button class="add-post-btn" (click)="openAddPostDialog()">
       <mat-icon>add</mat-icon>
       New Post
     </button>
   </header>
 
-  <!-- Filters -->
-  <div class="filters-bar">
-    <mat-form-field appearance="outline" class="search-field">
-      <mat-label>Search posts...</mat-label>
-      <mat-icon matPrefix>search</mat-icon>
-      <input matInput [formControl]="searchControl" placeholder="Ex. Angular tips">
-    </mat-form-field>
+  <div class="main-layout">
+    <!-- Main Content Area -->
+    <div class="content-area">
+      <!-- Filters -->
+      <div class="filters-bar">
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Search posts...</mat-label>
+          <mat-icon matPrefix>search</mat-icon>
+          <input matInput [formControl]="searchControl" placeholder="Ex. Angular tips">
+        </mat-form-field>
 
-    <mat-form-field appearance="outline" class="sort-field">
-      <mat-label>Sort by</mat-label>
-      <mat-select [formControl]="sortControl">
-        <mat-option value="createdAt">Newest First</mat-option>
-        <mat-option value="likes">Most Popular</mat-option>
-      </mat-select>
-    </mat-form-field>
-  </div>
-
-  <!-- Content -->
-  <div class="posts-grid">
-    @if (posts$ | async; as posts) {
-      @for (post of posts; track post.id) {
-        <app-post-card [post]="post"></app-post-card>
-      } @empty {
-        <div class="empty-state">
-          <mat-icon>forum</mat-icon>
-          <h3>No posts found</h3>
-          <p>Be the first to start a discussion!</p>
-        </div>
-      }
-    } @else {
-      <div class="loading-spinner">
-        <mat-spinner diameter="40"></mat-spinner>
+        <mat-form-field appearance="outline" class="sort-field">
+          <mat-label>Sort by</mat-label>
+          <mat-select [formControl]="sortControl">
+            <mat-option value="createdAt">Newest First</mat-option>
+            <mat-option value="likes">Most Popular</mat-option>
+          </mat-select>
+        </mat-form-field>
       </div>
-    }
+
+      <!-- Content -->
+      <div class="posts-grid">
+        @if (posts$ | async; as posts) {
+          @for (post of posts; track post.id) {
+            <app-post-card [post]="post"></app-post-card>
+          } @empty {
+            <div class="empty-state">
+              <mat-icon>forum</mat-icon>
+              <h3>No posts found</h3>
+              <p>Be the first to start a discussion!</p>
+            </div>
+          }
+        } @else {
+          <div class="loading-spinner">
+            <mat-spinner diameter="40"></mat-spinner>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="trending-widget">
+        <h3>
+          <mat-icon>whatshot</mat-icon>
+          Trending (7 Days)
+        </h3>
+
+        <div class="trending-list">
+          @if (trendingPosts$ | async; as trending) {
+            @for (post of trending; track post.id; let i = $index) {
+              <a [routerLink]="['/post', post.id]" class="trending-item">
+                <div class="rank" [class.top-3]="i < 3">{{ i + 1 }}</div>
+                <div class="info">
+                  <div class="title" [title]="post.title">{{ post.title }}</div>
+                  <div class="stats">
+                    <mat-icon>visibility</mat-icon> {{ post.views || 0 }}
+                    <span style="margin: 0 4px">•</span>
+                    <mat-icon>thumb_up</mat-icon> {{ post.likes || 0 }}
+                  </div>
+                </div>
+              </a>
+            } @empty {
+              <div style="color: #94a3b8; text-align: center; padding: 10px;">
+                No trending posts yet.
+              </div>
+            }
+          } @else {
+            <div style="display: flex; justify-content: center; padding: 20px;">
+              <mat-spinner diameter="20"></mat-spinner>
+            </div>
+          }
+        </div>
+      </div>
+    </aside>
   </div>
 </div>
