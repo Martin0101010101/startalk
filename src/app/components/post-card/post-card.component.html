@@ -13,9 +13,29 @@
 
   <mat-card-content>
     <h2 class="post-title">{{ post.title }}</h2>
-    <p class="post-preview">
-      {{ post.content | slice:0:120 }}{{ post.content.length > 120 ? '...' : '' }}
-    </p>
+    
+    <!-- Show Top Comment if available -->
+    <div class="top-comment-preview" *ngIf="post.topComment; else noComments">
+      <div class="comment-badge">
+        <mat-icon>whatshot</mat-icon> 热门评论
+      </div>
+      <p class="comment-text">
+        <span class="comment-author">{{ post.topComment.authorName }}:</span>
+        {{ post.topComment.text | slice:0:80 }}{{ post.topComment.text.length > 80 ? '...' : '' }}
+      </p>
+      <div class="comment-likes">
+        <mat-icon>thumb_up</mat-icon> {{ post.topComment.likes }}
+      </div>
+    </div>
+
+    <ng-template #noComments>
+      <p class="post-preview" *ngIf="post.content">
+        <!-- Only show a very short snippet or nothing if requested "description only in post" -->
+        <!-- User said "description only in post", so maybe we hide this entirely or show a placeholder? -->
+        <!-- Let's show a placeholder or nothing. -->
+        <span class="no-comment-placeholder">暂无热门评论</span>
+      </p>
+    </ng-template>
   </mat-card-content>
 
   <mat-card-actions class="card-actions">

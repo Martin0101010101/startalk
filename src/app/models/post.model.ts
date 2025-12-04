@@ -13,4 +13,10 @@ export interface Post {
   rating: number; // 0-5 stars
   ratingCount: number; // Number of people who rated
   tags?: string[];
+  topComment?: {
+    id: string;
+    text: string;
+    authorName: string;
+    likes: number;
+  };
 }

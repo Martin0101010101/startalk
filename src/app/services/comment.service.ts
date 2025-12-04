@@ -46,12 +46,26 @@ export class CommentService {
         replies: []
       });
 
-      // Update post stats
-      transaction.update(postRef, {
+      const updates: any = {
         rating: newRating,
         ratingCount: newRatingCount,
         commentCount: currentCommentCount + 1
-      });
+      };
+
+      // If this is the first comment or it has a high rating (logic can vary), 
+      // we might want to set it as top comment initially, but usually top comment is based on likes.
+      // However, if there are no comments, this is the best one.
+      if (currentCommentCount === 0) {
+        updates['topComment'] = {
+          id: newCommentRef.id,
+          text: comment.text,
+          authorName: comment.authorName,
+          likes: 0
+        };
+      }
+
+      // Update post stats
+      transaction.update(postRef, updates);
     });
   }
 
@@ -60,9 +74,44 @@ export class CommentService {
     return deleteDoc(docRef);
   }
 
-  likeComment(commentId: string): Promise<void> {
-    const docRef = doc(this.firestore, 'comments', commentId);
-    return updateDoc(docRef, { likes: increment(1) });
+  async likeComment(commentId: string): Promise<void> {
+    const commentRef = doc(this.firestore, 'comments', commentId);
+
+    return runTransaction(this.firestore, async (transaction) => {
+      const commentDoc = await transaction.get(commentRef);
+      if (!commentDoc.exists()) {
+        throw new Error("Comment does not exist!");
+      }
+
+      const commentData = commentDoc.data() as Comment;
+      const newLikes = (commentData.likes || 0) + 1;
+      const postId = commentData.postId;
+
+      // Update comment likes
+      transaction.update(commentRef, { likes: newLikes });
+
+      // Check if we need to update the post's topComment
+      const postRef = doc(this.firestore, 'posts', postId);
+      const postDoc = await transaction.get(postRef);
+      
+      if (postDoc.exists()) {
+        const postData = postDoc.data();
+        const currentTopComment = postData['topComment'];
+
+        // Update if no top comment exists, or if this comment has more likes than the current top comment
+        // Or if this IS the top comment (to update its like count)
+        if (!currentTopComment || newLikes > currentTopComment.likes || currentTopComment.id === commentId) {
+          transaction.update(postRef, {
+            topComment: {
+              id: commentId,
+              text: commentData.text,
+              authorName: commentData.authorName,
+              likes: newLikes
+            }
+          });
+        }
+      }
+    });
   }
 
   async addReply(commentId: string, reply: Reply, postId: string): Promise<void> {
