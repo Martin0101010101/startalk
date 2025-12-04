@@ -20,17 +20,17 @@
 
   <mat-card-actions class="card-actions">
     <div class="stats">
-      <button mat-icon-button class="stat-item like-btn" (click)="likePost($event)" matTooltip="Like this post">
-        <mat-icon>thumb_up</mat-icon>
+      <button mat-button class="stat-item like-btn" (click)="likePost($event)" matTooltip="点赞">
+        <mat-icon>thumb_up_off_alt</mat-icon>
         <span>{{ post.likes || 0 }}</span>
       </button>
       
-      <div class="stat-item">
-        <mat-icon>comment</mat-icon>
-        <span>{{ post.commentCount || 0 }}</span>
+      <div class="stat-item comment-stat" matTooltip="评论数">
+        <mat-icon>chat_bubble_outline</mat-icon>
+        <span>{{ post.commentCount || 0 }} 评论</span>
       </div>
     </div>
     
-    <button mat-button color="primary" class="read-more">READ MORE</button>
+    <button mat-button color="primary" class="read-more">查看详情</button>
   </mat-card-actions>
 </mat-card>

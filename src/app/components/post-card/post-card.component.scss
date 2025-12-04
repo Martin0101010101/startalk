@@ -87,24 +87,31 @@
 
     .stats {
       display: flex;
-      gap: 16px;
+      gap: 8px;
       align-items: center;
 
       .stat-item {
         display: flex;
         align-items: center;
-        color: #777;
-        gap: 4px;
+        color: #666;
+        gap: 6px;
         font-size: 0.9rem;
+        min-width: auto;
+        padding: 0 8px;
 
         mat-icon {
-          font-size: 18px;
-          width: 18px;
-          height: 18px;
+          font-size: 20px;
+          width: 20px;
+          height: 20px;
         }
 
         &.like-btn:hover {
           color: #ff4081;
+          background-color: rgba(255, 64, 129, 0.05);
+        }
+        
+        &.comment-stat {
+          cursor: default;
         }
       }
     }
