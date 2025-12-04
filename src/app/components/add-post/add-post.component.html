@@ -4,14 +4,11 @@
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Title</mat-label>
       <input matInput formControlName="title" placeholder="What's on your mind?">
-      <mat-error *ngIf="postForm.get('title')?.hasError('required')">Title is required</mat-error>
-      <mat-error *ngIf="postForm.get('title')?.hasError('minlength')">Title must be at least 5 characters</mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Content</mat-label>
       <textarea matInput formControlName="content" rows="6" placeholder="Share your details..."></textarea>
-      <mat-error *ngIf="postForm.get('content')?.hasError('required')">Content is required</mat-error>
     </mat-form-field>
 
     <div class="rating-section">
@@ -28,7 +25,7 @@
 
 <mat-dialog-actions align="end">
   <button mat-button (click)="onCancel()">Cancel</button>
-  <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="postForm.invalid || isSubmitting">
+  <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="isSubmitting">
     {{ isSubmitting ? 'Publishing...' : 'Publish' }}
   </button>
 </mat-dialog-actions>

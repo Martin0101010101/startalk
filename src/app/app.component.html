@@ -8,7 +8,6 @@
   <button mat-button routerLink="/">Home</button>
 
   <ng-container *ngIf="authService.user$ | async as user; else loginBtn">
-    <button mat-button routerLink="/add-post">Add Post</button>
     <button mat-button (click)="logout()">Logout ({{ user.displayName || user.email }})</button>
   </ng-container>
 

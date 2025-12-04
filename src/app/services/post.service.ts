@@ -35,8 +35,8 @@ export class PostService {
       createdAt: Timestamp.now(),
       likes: 0,
       commentCount: 0,
-      rating: 0,
-      ratingCount: 0,
+      rating: post.rating || 0,
+      ratingCount: post.ratingCount || 0,
       authorAvatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${post.authorName || 'User'}` // Random avatar
     };
     return addDoc(this.postsCollection, newPost);

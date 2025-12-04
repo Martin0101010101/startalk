@@ -34,15 +34,16 @@ export class AddPostComponent {
   private dialogRef = inject(MatDialogRef<AddPostComponent>);
 
   postForm = this.fb.group({
-    title: ['', [Validators.required, Validators.minLength(5)]],
-    content: ['', [Validators.required, Validators.minLength(10)]],
-    rating: [0, [Validators.min(1), Validators.max(5)]]
+    title: [''],
+    content: [''],
+    rating: [0]
   });
 
   isSubmitting = false;
 
   async onSubmit() {
-    if (this.postForm.invalid) return;
+    // Removed validation check as requested
+    // if (this.postForm.invalid) return;
 
     this.isSubmitting = true;
     const user = this.authService.currentUser;
