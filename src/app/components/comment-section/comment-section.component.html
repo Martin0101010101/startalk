@@ -5,8 +5,9 @@
       <div class="rating-left">
         <div class="average-score">{{ stats.total > 0 ? stats.average : '-' }}</div>
         <div class="average-stars">
-          <mat-icon *ngFor="let i of [1,2,3,4,5]" [class.filled]="i <= stats.average">
-            {{ i <= stats.average ? 'star' : 'star_border' }}
+          <!-- Display stars based on 10-point scale (approximate) -->
+          <mat-icon *ngFor="let i of [1,2,3,4,5]" [class.filled]="i <= (stats.average / 2)">
+            {{ i <= (stats.average / 2) ? 'star' : 'star_border' }}
           </mat-icon>
         </div>
         <div class="total-reviews">{{ stats.total }} JRs评分</div>
@@ -43,8 +44,8 @@
   <div class="comments-header">
     <h3>全部回复 <span class="comment-count">/{{ (comments$ | async)?.length || 0 }}</span></h3>
     <div class="sort-buttons">
-      <button mat-button class="active">最早</button>
-      <button mat-button>最晚</button>
+      <button mat-button [class.active]="(sortBy$ | async) === 'newest'" (click)="setSort('newest')">最新</button>
+      <button mat-button [class.active]="(sortBy$ | async) === 'hottest'" (click)="setSort('hottest')">最热</button>
     </div>
   </div>
 
@@ -66,16 +67,35 @@
           <span class="comment-date">{{ comment.createdAt.toDate() | date:'yyyy-MM-dd' }}</span>
         </div>
         <p class="comment-text">{{ comment.text }}</p>
+        
+        <!-- Replies Display -->
+        <div class="replies-list" *ngIf="comment.replies && comment.replies.length > 0">
+          <div class="reply-item" *ngFor="let reply of comment.replies">
+            <span class="reply-author">{{ reply.authorName }}: </span>
+            <span class="reply-text">{{ reply.text }}</span>
+          </div>
+        </div>
+
         <div class="comment-actions">
-          <button mat-button class="action-btn">
-            <mat-icon>thumb_up</mat-icon> 点亮
+          <button mat-button class="action-btn" (click)="likeComment(comment)">
+            <mat-icon>thumb_up</mat-icon> 点亮 {{ comment.likes || 0 }}
           </button>
-          <button mat-button class="action-btn">
+          <button mat-button class="action-btn" (click)="toggleReply(comment.id!)">
             <mat-icon>reply</mat-icon> 回复
           </button>
           <button mat-button class="action-btn delete-btn" *ngIf="canDeleteComment(comment)" (click)="deleteComment(comment)">
             <mat-icon>delete</mat-icon> 删除
           </button>
+        </div>
+
+        <!-- Reply Input -->
+        <div class="reply-input-area" *ngIf="replyingToCommentId === comment.id">
+          <mat-form-field appearance="outline" class="full-width dense-form">
+            <input matInput placeholder="回复..." [(ngModel)]="replyText">
+            <button mat-icon-button matSuffix (click)="submitReply(comment.id!)" [disabled]="!replyText.trim()">
+              <mat-icon>send</mat-icon>
+            </button>
+          </mat-form-field>
         </div>
       </div>
     </div>
