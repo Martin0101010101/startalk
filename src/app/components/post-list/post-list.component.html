@@ -14,6 +14,12 @@
   <div class="main-layout">
     <!-- Main Content Area -->
     <div class="content-area">
+      <!-- Feed Toggle -->
+      <div class="feed-toggle">
+        <button mat-button [class.active]="feedTypeControl.value === 'all'" (click)="feedTypeControl.setValue('all')">All Posts</button>
+        <button mat-button [class.active]="feedTypeControl.value === 'following'" (click)="feedTypeControl.setValue('following')">Following</button>
+      </div>
+
       <!-- Filters -->
       <div class="filters-bar">
         <mat-form-field appearance="outline" class="search-field">

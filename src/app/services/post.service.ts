@@ -46,6 +46,33 @@ export class PostService {
     );
   }
 
+  // Get posts by author
+  getPostsByAuthor(authorId: string): Observable<Post[]> {
+    const q = query(
+      this.postsCollection,
+      where('authorId', '==', authorId),
+      orderBy('createdAt', 'desc')
+    );
+    return collectionData(q, { idField: 'id' }) as Observable<Post[]>;
+  }
+
+  // Get posts by multiple authors (for following feed)
+  getPostsByAuthors(authorIds: string[]): Observable<Post[]> {
+    if (!authorIds || authorIds.length === 0) return from([[]]);
+
+    // Firestore 'in' query is limited to 10 items.
+    // For this demo, we'll just take the first 10.
+    // In production, you'd need to batch queries or use a different strategy.
+    const safeIds = authorIds.slice(0, 10);
+
+    const q = query(
+      this.postsCollection,
+      where('authorId', 'in', safeIds),
+      orderBy('createdAt', 'desc')
+    );
+    return collectionData(q, { idField: 'id' }) as Observable<Post[]>;
+  }
+
   // Get a single post
   getPost(id: string): Observable<Post> {
     const docRef = doc(this.firestore, 'posts', id);
@@ -81,14 +108,24 @@ export class PostService {
 
   // Like a post
   async likePost(id: string, currentLikes: number): Promise<void> {
-    const docRef = doc(this.firestore, 'posts', id);
-    return updateDoc(docRef, { likes: currentLikes + 1 });
+    try {
+      const docRef = doc(this.firestore, 'posts', id);
+      await updateDoc(docRef, { likes: currentLikes + 1 });
+    } catch (error) {
+      console.error('Error liking post:', error);
+      throw error;
+    }
   }
 
   // Increment view count
   async incrementViews(id: string): Promise<void> {
-    const docRef = doc(this.firestore, 'posts', id);
-    return updateDoc(docRef, { views: increment(1) });
+    try {
+      const docRef = doc(this.firestore, 'posts', id);
+      await updateDoc(docRef, { views: increment(1) });
+    } catch (error) {
+      console.error('Error incrementing views:', error);
+      // Don't throw for views, just log it
+    }
   }
 }
 

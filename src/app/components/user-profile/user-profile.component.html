@@ -1,0 +1,107 @@
+<ng-container *ngIf="viewState$ | async as state">
+
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="state.loading">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <!-- Not Found State -->
+  <div class="not-found-state" *ngIf="!state.loading && !state.profile">
+    <mat-icon>person_off</mat-icon>
+    <h2>User not found</h2>
+    <p>The user you are looking for does not exist or has not set up their profile yet.</p>
+    <button mat-raised-button color="primary" routerLink="/">Go Home</button>
+  </div>
+
+  <!-- Profile Content -->
+  <div class="profile-container" *ngIf="!state.loading && state.profile as profile">
+    <!-- Profile Header -->
+    <div class="profile-header">
+      <div class="profile-cover"></div>
+      <div class="profile-info">
+        <div class="avatar-wrapper">
+          <img [src]="profile.photoURL" alt="Avatar" class="profile-avatar">
+        </div>
+
+        <div class="user-details">
+          <div class="name-row">
+            <h1>{{ profile.displayName }}</h1>
+            <span class="join-date">Joined {{ profile.joinDate.toDate() | date:'MMMM yyyy' }}</span>
+          </div>
+
+          <div class="stats-row">
+            <div class="stat">
+              <span class="count">{{ profile.followers ? profile.followers.length : 0 }}</span>
+              <span class="label">Followers</span>
+            </div>
+            <div class="stat">
+              <span class="count">{{ profile.following ? profile.following.length : 0 }}</span>
+              <span class="label">Following</span>
+            </div>
+          </div>
+
+          <div class="bio-section">
+            <div *ngIf="!editingBio" class="bio-text">
+              {{ profile.bio || 'No bio yet.' }}
+              <button mat-icon-button *ngIf="isOwner$ | async" (click)="startEditBio(profile.bio || '')">
+                <mat-icon>edit</mat-icon>
+              </button>
+            </div>
+            <div *ngIf="editingBio" class="bio-edit">
+              <mat-form-field appearance="outline" class="full-width">
+                <textarea matInput [(ngModel)]="newBio" rows="3" maxlength="150"></textarea>
+              </mat-form-field>
+              <div class="edit-actions">
+                <button mat-button (click)="cancelEdit()">Cancel</button>
+                <button mat-raised-button color="primary" (click)="saveBio(profile.uid)">Save</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="action-buttons">
+          <ng-container *ngIf="(isOwner$ | async) === false">
+            <ng-container *ngIf="isFollowing$ | async as isFollowing; else notFollowing">
+              <button mat-raised-button
+                      color="warn"
+                      (click)="unfollow(profile.uid)">
+                Unfollow
+              </button>
+            </ng-container>
+            <ng-template #notFollowing>
+              <button mat-raised-button
+                      color="primary"
+                      (click)="follow(profile.uid)">
+                Follow
+              </button>
+            </ng-template>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+
+    <!-- User Content -->
+    <div class="profile-content">
+      <mat-tab-group animationDuration="0ms" mat-stretch-tabs="false" mat-align-tabs="start">
+        <mat-tab label="Posts">
+          <div class="posts-list">
+            <ng-container *ngIf="posts$ | async as posts; else loadingPosts">
+              @for (post of posts; track post.id) {
+                <app-post-card [post]="post"></app-post-card>
+              } @empty {
+                <div class="empty-state">
+                  <mat-icon>post_add</mat-icon>
+                  <p>Hasn't posted anything yet.</p>
+                </div>
+              }
+            </ng-container>
+            <ng-template #loadingPosts>
+              <mat-spinner diameter="40"></mat-spinner>
+            </ng-template>
+          </div>
+        </mat-tab>
+        <!-- Future: Comments tab, Likes tab -->
+      </mat-tab-group>
+    </div>
+  </div>
+</ng-container>

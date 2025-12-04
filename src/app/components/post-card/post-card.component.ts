@@ -20,10 +20,15 @@ export class PostCardComponent {
   @Input() post!: Post;
   private postService = inject(PostService);
 
-  likePost(event: Event) {
+  async likePost(event: Event) {
     event.stopPropagation();
     if (this.post.id) {
-      this.postService.likePost(this.post.id, this.post.likes || 0);
+      try {
+        await this.postService.likePost(this.post.id, this.post.likes || 0);
+      } catch (error) {
+        console.error('Failed to like post:', error);
+        // Optional: Show a snackbar or alert
+      }
     }
   }
 

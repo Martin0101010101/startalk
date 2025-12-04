@@ -57,7 +57,7 @@
       </div>
       <div class="comment-content">
         <div class="comment-header-row">
-          <span class="author-name">{{ comment.authorName || 'JR' }}</span>
+          <span class="author-name" [routerLink]="['/users', comment.authorId]" style="cursor: pointer">{{ comment.authorName || 'JR' }}</span>
           <span class="comment-stars">
             <mat-icon *ngFor="let star of getDisplayStars(comment.rating)"
                       [class.filled]="star === 1" class="mini-star">
@@ -67,7 +67,7 @@
           <span class="comment-date">{{ comment.createdAt.toDate() | date:'yyyy-MM-dd' }}</span>
         </div>
         <p class="comment-text">{{ comment.text }}</p>
-        
+
         <!-- Replies Display -->
         <div class="replies-list" *ngIf="comment.replies && comment.replies.length > 0">
           <div class="reply-item" *ngFor="let reply of getVisibleReplies(comment)">
@@ -76,7 +76,7 @@
             </div>
             <div class="reply-content-wrapper">
               <div class="reply-header">
-                <span class="reply-author">{{ reply.authorName }}</span>
+                <span class="reply-author" [routerLink]="['/users', reply.authorId]" style="cursor: pointer">{{ reply.authorName }}</span>
                 <span class="reply-target" *ngIf="reply.replyToName">
                   <span class="reply-arrow">回复</span> {{ reply.replyToName }}
                 </span>
@@ -93,7 +93,7 @@
               </div>
             </div>
           </div>
-          
+
           <div class="expand-replies" *ngIf="comment.replies.length > 1">
             <button mat-button color="primary" (click)="toggleExpandReplies(comment.id!)">
               {{ isExpanded(comment.id!) ? '收起回复' : '查看全部 ' + comment.replies.length + ' 条回复' }}
@@ -146,7 +146,7 @@
     <div class="form-rating" [class.selected]="selectedRating > 0">
       <span *ngIf="selectedRating === 0">请先评分：</span>
       <span *ngIf="selectedRating > 0">你的评分：{{ selectedRating }}星</span>
-      
+
       <div class="star-picker-small">
         <mat-icon *ngFor="let i of [1,2,3,4,5]"
                   (click)="setRating(i)"

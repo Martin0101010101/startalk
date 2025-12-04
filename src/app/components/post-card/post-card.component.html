@@ -1,9 +1,11 @@
 <mat-card class="post-card" [routerLink]="['/posts', post.id]">
   <div class="card-header">
-    <img [src]="post.authorAvatar || 'assets/default-avatar.png'" alt="Avatar" class="avatar">
-    <div class="meta-info">
-      <span class="author-name">{{ post.authorName || 'Anonymous' }}</span>
-      <span class="post-date">{{ post.createdAt.toDate() | date:'mediumDate' }}</span>
+    <div class="author-link" [routerLink]="['/users', post.authorId]" (click)="$event.stopPropagation()">
+      <img [src]="post.authorAvatar || 'assets/default-avatar.png'" alt="Avatar" class="avatar">
+      <div class="meta-info">
+        <span class="author-name">{{ post.authorName || 'Anonymous' }}</span>
+        <span class="post-date">{{ post.createdAt.toDate() | date:'mediumDate' }}</span>
+      </div>
     </div>
     <div class="rating-badge" *ngIf="post.rating > 0">
       <span class="score">{{ ratingDisplay }}</span>
@@ -13,7 +15,7 @@
 
   <mat-card-content>
     <h2 class="post-title">{{ post.title }}</h2>
-    
+
     <!-- Show Top Comment if available -->
     <div class="top-comment-preview" *ngIf="post.topComment; else noComments">
       <div class="comment-badge">
@@ -44,13 +46,13 @@
         <mat-icon>thumb_up_off_alt</mat-icon>
         <span>{{ post.likes || 0 }}</span>
       </button>
-      
+
       <div class="stat-item comment-stat" matTooltip="评论数">
         <mat-icon>chat_bubble_outline</mat-icon>
         <span>{{ post.commentCount || 0 }} 评论</span>
       </div>
     </div>
-    
+
     <button mat-button color="primary" class="read-more">查看详情</button>
   </mat-card-actions>
 </mat-card>

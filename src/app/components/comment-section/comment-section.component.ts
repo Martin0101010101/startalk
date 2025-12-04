@@ -1,6 +1,7 @@
 import { Component, Input, inject, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -18,7 +19,7 @@ import { Timestamp } from '@angular/fire/firestore';
 @Component({
   selector: 'app-comment-section',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, MatDividerModule, MatProgressBarModule],
+  imports: [CommonModule, FormsModule, RouterModule, MatCardModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, MatDividerModule, MatProgressBarModule],
   templateUrl: './comment-section.component.html',
   styleUrl: './comment-section.component.scss'
 })
@@ -31,7 +32,7 @@ export class CommentSectionComponent implements OnInit, OnChanges {
 
   comments$!: Observable<Comment[]>;
   ratingStats$!: Observable<RatingStats>;
-  
+
   // Sorting
   sortBy$ = new BehaviorSubject<'newest' | 'hottest'>('newest');
   post$ = new BehaviorSubject<Post | undefined>(undefined);
@@ -120,7 +121,7 @@ export class CommentSectionComponent implements OnInit, OnChanges {
           // If multiple missing, we can't infer distribution perfectly.
           // We'll just use the post's total and average for the summary numbers,
           // but the distribution bars might be slightly off (normalized to what we have).
-          // Or we could distribute the missing count proportionally? 
+          // Or we could distribute the missing count proportionally?
           // Let's just trust the post's total count for the "Total Reviews" display.
           total = postTotal;
         }
@@ -141,7 +142,7 @@ export class CommentSectionComponent implements OnInit, OnChanges {
     // If we used postTotal but didn't add to distribution array, the sum of distribution won't match total.
     // We should calculate percentages based on the sum of distribution counts to be visually correct for the bars we show.
     const distributionTotal = distribution.reduce((a, b) => a + b, 0);
-    
+
     return {
       average: average10,
       total: post ? (post.ratingCount || 0) : total,
