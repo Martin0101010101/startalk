@@ -397,11 +397,11 @@
 
 // Replies List
 .replies-list {
-  background-color: #f9f9f9;
+  background-color: rgba(15, 23, 42, 0.4); /* Darker slate background */
   padding: 12px;
   border-radius: 8px;
   margin-top: 12px;
-  border: 1px solid #eee;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 
   .reply-item {
     display: flex;
@@ -417,7 +417,7 @@
         width: 32px;
         height: 32px;
         border-radius: 50%;
-        background: #ddd;
+        background: #334155;
       }
     }
 
@@ -434,15 +434,15 @@
         .reply-author {
           font-weight: 600;
           font-size: 0.9rem;
-          color: #333;
+          color: #e2e8f0; /* Slate 200 */
         }
 
         .reply-target {
           font-size: 0.9rem;
-          color: #666;
+          color: #94a3b8; /* Slate 400 */
 
           .reply-arrow {
-            color: #999;
+            color: #64748b; /* Slate 500 */
             margin-right: 4px;
             font-size: 0.85rem;
           }
@@ -450,13 +450,13 @@
 
         .reply-date {
           font-size: 0.75rem;
-          color: #999;
+          color: #64748b; /* Slate 500 */
           margin-left: auto;
         }
       }
 
       .reply-text {
-        color: #444;
+        color: #cbd5e1; /* Slate 300 */
         font-size: 0.95rem;
         line-height: 1.4;
         margin-bottom: 8px;
@@ -470,7 +470,7 @@
           background: none;
           border: none;
           cursor: pointer;
-          color: #888;
+          color: #94a3b8; /* Slate 400 */
           font-size: 0.8rem;
           display: flex;
           align-items: center;
@@ -485,7 +485,7 @@
           }
 
           &:hover {
-            color: #3f51b5;
+            color: #38bdf8; /* Sky 400 */
           }
         }
       }
@@ -506,9 +506,9 @@
 .reply-input-area {
   margin-top: 12px;
   padding: 16px;
-  background: #f5f7fa;
+  background: rgba(15, 23, 42, 0.4);
   border-radius: 12px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 
   .reply-box {
     display: flex;
@@ -519,11 +519,11 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: #e8eaf6;
+      background: rgba(56, 189, 248, 0.1);
       padding: 4px 12px;
       border-radius: 16px;
       font-size: 0.85rem;
-      color: #3f51b5;
+      color: #38bdf8;
       font-weight: 500;
       width: fit-content;
 
@@ -532,6 +532,7 @@
         height: 24px;
         line-height: 24px;
         margin-left: 8px;
+        cursor: pointer;
 
         mat-icon {
           font-size: 16px;
@@ -544,18 +545,19 @@
     textarea {
       width: 100%;
       padding: 12px;
-      border: 1px solid #ddd;
+      border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 8px;
       resize: vertical;
       font-family: inherit;
-      background: white;
+      background: rgba(30, 41, 59, 0.8);
+      color: #e2e8f0;
       transition: border-color 0.2s, box-shadow 0.2s;
       box-sizing: border-box;
 
       &:focus {
         outline: none;
-        border-color: #3f51b5;
-        box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.1);
+        border-color: #38bdf8;
+        box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.1);
       }
     }
 
