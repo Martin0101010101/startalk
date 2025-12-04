@@ -70,9 +70,28 @@
         
         <!-- Replies Display -->
         <div class="replies-list" *ngIf="comment.replies && comment.replies.length > 0">
-          <div class="reply-item" *ngFor="let reply of comment.replies">
-            <span class="reply-author">{{ reply.authorName }}: </span>
-            <span class="reply-text">{{ reply.text }}</span>
+          <div class="reply-item" *ngFor="let reply of getVisibleReplies(comment)">
+            <div class="reply-avatar">
+              <img [src]="reply.authorAvatar || 'assets/default-avatar.png'" alt="Avatar">
+            </div>
+            <div class="reply-content-wrapper">
+              <div class="reply-header">
+                <span class="reply-author">{{ reply.authorName }}</span>
+                <span class="reply-date">{{ reply.createdAt.toDate() | date:'MM-dd' }}</span>
+              </div>
+              <div class="reply-text">{{ reply.text }}</div>
+              <div class="reply-actions">
+                <button class="reply-like-btn" (click)="likeReply(comment.id!, reply)">
+                  <mat-icon>thumb_up_off_alt</mat-icon> {{ reply.likes || 0 }}
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="expand-replies" *ngIf="comment.replies.length > 1">
+            <button mat-button color="primary" (click)="toggleExpandReplies(comment.id!)">
+              {{ isExpanded(comment.id!) ? '收起回复' : '查看全部 ' + comment.replies.length + ' 条回复' }}
+            </button>
           </div>
         </div>
 
@@ -90,12 +109,14 @@
 
         <!-- Reply Input -->
         <div class="reply-input-area" *ngIf="replyingToCommentId === comment.id">
-          <mat-form-field appearance="outline" class="full-width dense-form">
-            <input matInput placeholder="回复..." [(ngModel)]="replyText">
-            <button mat-icon-button matSuffix (click)="submitReply(comment.id!)" [disabled]="!replyText.trim()">
-              <mat-icon>send</mat-icon>
-            </button>
-          </mat-form-field>
+          <div class="reply-box">
+            <textarea matInput placeholder="回复 @{{comment.authorName}}..." [(ngModel)]="replyText" rows="3"></textarea>
+            <div class="reply-box-actions">
+              <button mat-raised-button color="primary" (click)="submitReply(comment.id!)" [disabled]="!replyText.trim()">
+                发布回复
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

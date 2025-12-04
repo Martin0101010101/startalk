@@ -40,12 +40,20 @@ export class CommentSectionComponent implements OnInit {
   // Reply state
   replyingToCommentId: string | null = null;
   replyText = '';
+  expandedComments = new Set<string>(); // Set of comment IDs where replies are expanded
 
   ngOnInit() {
     const rawComments$ = this.commentService.getComments(this.postId);
 
     this.comments$ = combineLatest([rawComments$, this.sortBy$]).pipe(
       map(([comments, sortBy]) => {
+        // Sort replies for each comment (most likes first)
+        comments.forEach(c => {
+          if (c.replies) {
+            c.replies.sort((r1, r2) => (r2.likes || 0) - (r1.likes || 0));
+          }
+        });
+
         return comments.sort((a, b) => {
           if (sortBy === 'hottest') {
             return (b.likes || 0) - (a.likes || 0);
@@ -146,13 +154,42 @@ export class CommentSectionComponent implements OnInit {
     const reply: Reply = {
       authorId: user.uid,
       authorName: user.displayName || user.email || 'Anonymous',
+      authorAvatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.displayName || 'User'}`,
       text: this.replyText,
-      createdAt: Timestamp.now()
+      createdAt: Timestamp.now(),
+      likes: 0
     };
 
-    await this.commentService.addReply(commentId, reply);
+    await this.commentService.addReply(commentId, reply, this.postId);
     this.replyingToCommentId = null;
     this.replyText = '';
+    // Auto expand to show the new reply
+    this.expandedComments.add(commentId);
+  }
+
+  async likeReply(commentId: string, reply: Reply) {
+    await this.commentService.likeReply(commentId, reply);
+  }
+
+  toggleExpandReplies(commentId: string) {
+    if (this.expandedComments.has(commentId)) {
+      this.expandedComments.delete(commentId);
+    } else {
+      this.expandedComments.add(commentId);
+    }
+  }
+
+  isExpanded(commentId: string): boolean {
+    return this.expandedComments.has(commentId);
+  }
+
+  getVisibleReplies(comment: Comment): Reply[] {
+    if (!comment.replies || comment.replies.length === 0) return [];
+    if (this.isExpanded(comment.id!)) {
+      return comment.replies;
+    }
+    // Return only the first one (which is sorted by likes)
+    return [comment.replies[0]];
   }
 
   setRating(rating: number) {
