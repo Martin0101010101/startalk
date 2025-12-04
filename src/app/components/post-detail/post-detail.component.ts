@@ -49,18 +49,18 @@ export class PostDetailComponent implements OnInit {
 
   async deletePost(post: Post) {
     if (!this.canDelete(post)) {
-      alert('你没有权限删除这个帖子！');
+      alert('You do not have permission to delete this post!');
       return;
     }
 
-    if (confirm('确定要删除这个帖子吗？此操作不可撤销。')) {
+    if (confirm('Are you sure you want to delete this post? This action cannot be undone.')) {
       try {
         await this.postService.deletePost(post.id!);
-        alert('帖子已删除');
+        alert('Post deleted successfully');
         this.router.navigate(['/']);
       } catch (error) {
-        console.error('删除失败:', error);
-        alert('删除失败，请重试');
+        console.error('Delete failed:', error);
+        alert('Delete failed. Please try again.');
       }
     }
   }

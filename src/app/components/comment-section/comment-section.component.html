@@ -1,5 +1,5 @@
 <div class="comments-container">
-  <!-- 虎扑评分 Rating Summary Section - Always visible -->
+  <!-- Rating Summary Section - Always visible -->
   <ng-container *ngIf="ratingStats$ | async as stats">
     <div class="rating-summary">
       <div class="rating-left">
@@ -10,7 +10,7 @@
             {{ i <= (stats.average / 2) ? 'star' : 'star_border' }}
           </mat-icon>
         </div>
-        <div class="total-reviews">{{ stats.total }} JRs评分</div>
+        <div class="total-reviews">{{ stats.total }} Ratings</div>
       </div>
       <div class="rating-right">
         <div class="rating-bar" *ngFor="let percent of stats.distribution; let i = index">
@@ -23,9 +23,9 @@
       </div>
     </div>
 
-    <!-- 立即评分 Rate Now Section -->
+    <!-- Rate Now Section -->
     <div class="rate-now-section">
-      <span class="rate-label">立即评分</span>
+      <span class="rate-label">Rate Now</span>
       <div class="star-picker-inline">
         <mat-icon *ngFor="let i of [1,2,3,4,5]"
                   (click)="setRating(i)"
@@ -40,12 +40,12 @@
 
   <mat-divider></mat-divider>
 
-  <!-- 全部回复 All Comments Header -->
+  <!-- All Comments Header -->
   <div class="comments-header">
-    <h3>全部回复 <span class="comment-count">/{{ (comments$ | async)?.length || 0 }}</span></h3>
+    <h3>All Comments <span class="comment-count">/{{ (comments$ | async)?.length || 0 }}</span></h3>
     <div class="sort-buttons">
-      <button mat-button [class.active]="(sortBy$ | async) === 'newest'" (click)="setSort('newest')">最新</button>
-      <button mat-button [class.active]="(sortBy$ | async) === 'hottest'" (click)="setSort('hottest')">最热</button>
+      <button mat-button [class.active]="(sortBy$ | async) === 'newest'" (click)="setSort('newest')">Newest</button>
+      <button mat-button [class.active]="(sortBy$ | async) === 'hottest'" (click)="setSort('hottest')">Hottest</button>
     </div>
   </div>
 
@@ -57,7 +57,7 @@
       </div>
       <div class="comment-content">
         <div class="comment-header-row">
-          <span class="author-name" [routerLink]="['/users', comment.authorId]" style="cursor: pointer">{{ comment.authorName || 'JR' }}</span>
+          <span class="author-name" [routerLink]="['/users', comment.authorId]" style="cursor: pointer">{{ comment.authorName || 'User' }}</span>
           <span class="comment-stars">
             <mat-icon *ngFor="let star of getDisplayStars(comment.rating)"
                       [class.filled]="star === 1" class="mini-star">
@@ -78,7 +78,7 @@
               <div class="reply-header">
                 <span class="reply-author" [routerLink]="['/users', reply.authorId]" style="cursor: pointer">{{ reply.authorName }}</span>
                 <span class="reply-target" *ngIf="reply.replyToName">
-                  <span class="reply-arrow">回复</span> {{ reply.replyToName }}
+                  <span class="reply-arrow">replied to</span> {{ reply.replyToName }}
                 </span>
                 <span class="reply-date">{{ reply.createdAt.toDate() | date:'MM-dd' }}</span>
               </div>
@@ -88,7 +88,7 @@
                   <mat-icon>thumb_up_off_alt</mat-icon> {{ reply.likes || 0 }}
                 </button>
                 <button class="reply-action-btn" (click)="initiateReplyToUser(comment.id!, reply.authorName)">
-                  <mat-icon>chat_bubble_outline</mat-icon> 回复
+                  <mat-icon>chat_bubble_outline</mat-icon> Reply
                 </button>
               </div>
             </div>
@@ -96,20 +96,20 @@
 
           <div class="expand-replies" *ngIf="comment.replies.length > 1">
             <button mat-button color="primary" (click)="toggleExpandReplies(comment.id!)">
-              {{ isExpanded(comment.id!) ? '收起回复' : '查看全部 ' + comment.replies.length + ' 条回复' }}
+              {{ isExpanded(comment.id!) ? 'Collapse replies' : 'View all ' + comment.replies.length + ' replies' }}
             </button>
           </div>
         </div>
 
         <div class="comment-actions">
           <button mat-button class="action-btn" (click)="likeComment(comment)">
-            <mat-icon>thumb_up</mat-icon> 点亮 {{ comment.likes || 0 }}
+            <mat-icon>thumb_up</mat-icon> Like {{ comment.likes || 0 }}
           </button>
           <button mat-button class="action-btn" (click)="toggleReply(comment.id!)">
-            <mat-icon>reply</mat-icon> 回复
+            <mat-icon>reply</mat-icon> Reply
           </button>
           <button mat-button class="action-btn delete-btn" *ngIf="canDeleteComment(comment)" (click)="deleteComment(comment)">
-            <mat-icon>delete</mat-icon> 删除
+            <mat-icon>delete</mat-icon> Delete
           </button>
         </div>
 
@@ -117,15 +117,15 @@
         <div class="reply-input-area" *ngIf="replyingToCommentId === comment.id">
           <div class="reply-box">
             <div class="reply-context" *ngIf="replyingToUserName">
-              <span>回复 {{ replyingToUserName }}</span>
+              <span>Replying to {{ replyingToUserName }}</span>
               <button mat-icon-button class="close-context" (click)="replyingToUserName = null">
                 <mat-icon>close</mat-icon>
               </button>
             </div>
-            <textarea matInput [placeholder]="replyingToUserName ? '回复 ' + replyingToUserName + '...' : '回复 ' + (comment.authorName || 'JR') + '...'" [(ngModel)]="replyText" rows="3"></textarea>
+            <textarea matInput [placeholder]="replyingToUserName ? 'Reply to ' + replyingToUserName + '...' : 'Reply to ' + (comment.authorName || 'User') + '...'" [(ngModel)]="replyText" rows="3"></textarea>
             <div class="reply-box-actions">
               <button mat-raised-button color="primary" (click)="submitReply(comment.id!)" [disabled]="!replyText.trim()">
-                发布回复
+                Post Reply
               </button>
             </div>
           </div>
@@ -135,7 +135,7 @@
 
     <div class="no-comments" *ngIf="(comments$ | async)?.length === 0">
       <mat-icon>forum</mat-icon>
-      <p>暂无评论，快来抢沙发！</p>
+      <p>No comments yet. Be the first to comment!</p>
     </div>
   </div>
 
@@ -144,8 +144,8 @@
   <!-- Add Comment Form - Always visible -->
   <div class="add-comment-form">
     <div class="form-rating" [class.selected]="selectedRating > 0">
-      <span *ngIf="selectedRating === 0">请先评分：</span>
-      <span *ngIf="selectedRating > 0">你的评分：{{ selectedRating }}星</span>
+      <span *ngIf="selectedRating === 0">Please rate first:</span>
+      <span *ngIf="selectedRating > 0">Your rating: {{ selectedRating }} stars</span>
 
       <div class="star-picker-small">
         <mat-icon *ngFor="let i of [1,2,3,4,5]"
@@ -160,13 +160,13 @@
     </div>
 
     <mat-form-field appearance="outline" class="full-width">
-      <mat-label>发表你的看法...</mat-label>
-      <textarea matInput [(ngModel)]="newCommentText" rows="3" placeholder="说点什么吧..."></textarea>
+      <mat-label>Share your thoughts...</mat-label>
+      <textarea matInput [(ngModel)]="newCommentText" rows="3" placeholder="Write a comment..."></textarea>
     </mat-form-field>
 
     <button mat-raised-button color="primary" (click)="addComment()"
             [disabled]="!newCommentText.trim() || selectedRating === 0">
-      发布评论
+      Post Comment
     </button>
   </div>
 </div>

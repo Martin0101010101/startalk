@@ -7,7 +7,7 @@
   backdrop-filter: blur(5px); /* Frosted glass effect */
 }
 
-// 虎扑评分 Rating Summary Section
+// Rating Summary Section
 .rating-summary {
   display: flex;
   gap: 32px;
@@ -93,7 +93,7 @@
   }
 }
 
-// 立即评分 Rate Now Section
+// Rate Now Section
 .rate-now-section {
   display: flex;
   align-items: center;
@@ -130,7 +130,7 @@
   }
 }
 
-// 全部回复 Comments Header
+// Comments Header
 .comments-header {
   display: flex;
   justify-content: space-between;

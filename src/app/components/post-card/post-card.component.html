@@ -19,7 +19,7 @@
     <!-- Show Top Comment if available -->
     <div class="top-comment-preview" *ngIf="post.topComment; else noComments">
       <div class="comment-badge">
-        <mat-icon>whatshot</mat-icon> 热门评论
+        <mat-icon>whatshot</mat-icon> Top Comment
       </div>
       <p class="comment-text">
         <span class="comment-author">{{ post.topComment.authorName }}:</span>
@@ -35,24 +35,24 @@
         <!-- Only show a very short snippet or nothing if requested "description only in post" -->
         <!-- User said "description only in post", so maybe we hide this entirely or show a placeholder? -->
         <!-- Let's show a placeholder or nothing. -->
-        <span class="no-comment-placeholder">暂无热门评论</span>
+        <span class="no-comment-placeholder">No top comments yet</span>
       </p>
     </ng-template>
   </mat-card-content>
 
   <mat-card-actions class="card-actions">
     <div class="stats">
-      <button mat-button class="stat-item like-btn" (click)="likePost($event)" matTooltip="点赞">
+      <button mat-button class="stat-item like-btn" (click)="likePost($event)" matTooltip="Like">
         <mat-icon>thumb_up_off_alt</mat-icon>
         <span>{{ post.likes || 0 }}</span>
       </button>
 
-      <div class="stat-item comment-stat" matTooltip="评论数">
+      <div class="stat-item comment-stat" matTooltip="Comments">
         <mat-icon>chat_bubble_outline</mat-icon>
-        <span>{{ post.commentCount || 0 }} 评论</span>
+        <span>{{ post.commentCount || 0 }} Comments</span>
       </div>
     </div>
 
-    <button mat-button color="primary" class="read-more">查看详情</button>
+    <button mat-button color="primary" class="read-more">View Details</button>
   </mat-card-actions>
 </mat-card>

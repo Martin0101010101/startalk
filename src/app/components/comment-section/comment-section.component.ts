@@ -230,7 +230,7 @@ export class CommentSectionComponent implements OnInit, OnChanges {
       this.expandedComments.add(commentId);
     } catch (error) {
       console.error('Error adding reply:', error);
-      alert('回复发布失败，请重试');
+      alert('Failed to post reply. Please try again.');
     }
   }
 
@@ -283,16 +283,16 @@ export class CommentSectionComponent implements OnInit, OnChanges {
 
   async deleteComment(comment: Comment) {
     if (!this.canDeleteComment(comment)) {
-      alert('你没有权限删除这条评论！');
+      alert('You do not have permission to delete this comment!');
       return;
     }
 
-    if (confirm('确定要删除这条评论吗？')) {
+    if (confirm('Are you sure you want to delete this comment?')) {
       try {
         await this.commentService.deleteComment(comment.id!);
       } catch (error) {
-        console.error('删除失败:', error);
-        alert('删除失败，请重试');
+        console.error('Delete failed:', error);
+        alert('Delete failed. Please try again.');
       }
     }
   }
