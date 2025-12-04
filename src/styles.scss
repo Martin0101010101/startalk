@@ -63,3 +63,32 @@ button.mat-mdc-button {
   letter-spacing: 0.5px;
 }
 
+/* Custom Dialog Styling */
+.custom-dialog-container .mat-mdc-dialog-container {
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.custom-dialog-container .mat-mdc-dialog-surface {
+  border-radius: 16px;
+  box-shadow: 0 11px 15px -7px rgba(0,0,0,.2), 0 24px 38px 3px rgba(0,0,0,.14), 0 9px 46px 8px rgba(0,0,0,.12);
+}
+
+/* Global Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+ 
+::-webkit-scrollbar-thumb {
+  background: #ccc; 
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #aaa; 
+}
+

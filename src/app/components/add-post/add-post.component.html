@@ -1,20 +1,34 @@
-<div class="add-post-container">
-  <h2>Create New Post</h2>
-  <form (ngSubmit)="onSubmit()">
+<h2 mat-dialog-title>Create New Post</h2>
+<mat-dialog-content>
+  <form [formGroup]="postForm" class="post-form">
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Title</mat-label>
-      <input matInput [(ngModel)]="title" name="title" required>
+      <input matInput formControlName="title" placeholder="What's on your mind?">
+      <mat-error *ngIf="postForm.get('title')?.hasError('required')">Title is required</mat-error>
+      <mat-error *ngIf="postForm.get('title')?.hasError('minlength')">Title must be at least 5 characters</mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Content</mat-label>
-      <textarea matInput [(ngModel)]="content" name="content" rows="10" required></textarea>
+      <textarea matInput formControlName="content" rows="6" placeholder="Share your details..."></textarea>
+      <mat-error *ngIf="postForm.get('content')?.hasError('required')">Content is required</mat-error>
     </mat-form-field>
 
-    <div class="actions">
-      <button mat-raised-button color="primary" type="submit" [disabled]="!title || !content">
-        Publish Post
-      </button>
+    <div class="rating-section">
+      <label>Rate this topic (Optional):</label>
+      <div class="stars">
+        <mat-slider min="0" max="5" step="1" showTickMarks discrete [displayWith]="formatLabel">
+          <input matSliderThumb formControlName="rating">
+        </mat-slider>
+        <span class="rating-value">{{ postForm.get('rating')?.value }} Stars</span>
+      </div>
     </div>
   </form>
-</div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="postForm.invalid || isSubmitting">
+    {{ isSubmitting ? 'Publishing...' : 'Publish' }}
+  </button>
+</mat-dialog-actions>

@@ -1,15 +1,36 @@
-.add-post-container {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 24px;
+.post-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 8px;
 }
 
 .full-width {
   width: 100%;
-  margin-bottom: 16px;
 }
 
-.actions {
-  display: flex;
-  justify-content: flex-end;
+.rating-section {
+  margin-top: 8px;
+
+  label {
+    display: block;
+    margin-bottom: 8px;
+    color: #666;
+    font-weight: 500;
+  }
+
+  .stars {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    mat-slider {
+      width: 200px;
+    }
+
+    .rating-value {
+      font-weight: bold;
+      color: #3f51b5;
+    }
+  }
 }
