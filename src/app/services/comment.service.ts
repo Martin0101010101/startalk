@@ -78,6 +78,7 @@ export class CommentService {
     const commentRef = doc(this.firestore, 'comments', commentId);
 
     return runTransaction(this.firestore, async (transaction) => {
+      // 1. Read comment
       const commentDoc = await transaction.get(commentRef);
       if (!commentDoc.exists()) {
         throw new Error("Comment does not exist!");
@@ -87,14 +88,27 @@ export class CommentService {
       const newLikes = (commentData.likes || 0) + 1;
       const postId = commentData.postId;
 
+      // 2. Read post (if postId exists) - MUST be done before any writes
+      let postDoc: any = null;
+      let postRef: any = null;
+      
+      if (postId) {
+        postRef = doc(this.firestore, 'posts', postId);
+        postDoc = await transaction.get(postRef);
+      }
+
+      // 3. Writes
       // Update comment likes
       transaction.update(commentRef, { likes: newLikes });
 
+      // If postId is missing (legacy data), we can't update topComment
+      if (!postId) {
+        console.warn('Comment missing postId, skipping topComment update');
+        return;
+      }
+
       // Check if we need to update the post's topComment
-      const postRef = doc(this.firestore, 'posts', postId);
-      const postDoc = await transaction.get(postRef);
-      
-      if (postDoc.exists()) {
+      if (postDoc && postDoc.exists()) {
         const postData = postDoc.data();
         const currentTopComment = postData['topComment'];
 
