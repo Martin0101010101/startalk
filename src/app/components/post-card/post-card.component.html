@@ -3,7 +3,7 @@
     <img [src]="post.authorAvatar || 'assets/default-avatar.png'" alt="Avatar" class="avatar">
     <div class="meta-info">
       <span class="author-name">{{ post.authorName || 'Anonymous' }}</span>
-      <span class="post-date">{{ post.createdAt?.toDate() | date:'mediumDate' }}</span>
+      <span class="post-date">{{ post.createdAt.toDate() | date:'mediumDate' }}</span>
     </div>
     <div class="rating-badge" *ngIf="post.rating > 0">
       <span class="score">{{ ratingDisplay }}</span>
